@@ -3,7 +3,7 @@ from flask import Flask, request, abort
 import requests
 from ics import Calendar
 
-groups = {'T': 'turing', 'L': 'lovelace', 'B': 'babbage'}
+groups = {'t': 'turing', 'l': 'lovelace', 'b': 'babbage'}
 
 app = Flask(__name__)
 CORS(app)
@@ -18,12 +18,14 @@ def index(stu_hash):
     g = request.args.get('group')
     
     if g == None or not len(g.split(":")) == 2:
-        abort(400)
+        return "Your query string wasn't in the correct format"
     p = g.split(":")[1].lower()
-    g = g.split(":")[0]
+    g = g.split(":")[0].lower()
     if not g in groups.keys() or not p in ['a', 'b']:
-        abort(406)
+        return "Your query string wasn't in the correct format"
     timetable = requests.get("https://science.swansea.ac.uk/intranet/attendance/timetable/student_calendar/{0}/timetable.ics".format(stu_hash))
+    if "page not found" in timetable.text.lower():
+        return "The hash you provided was invalid"
     c = Calendar(timetable.text)
     toRemove = []
     for ev in c.events:
