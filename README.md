@@ -1,6 +1,7 @@
 # Import your timetable with filters
 This simply allows you to use the calender export feature from SU timetable and only have events from your house / group shown.
-I take would encourage you not to rely on this service, not only is it up to 12 hours behind the original calendar, it is just running on a VPS which could well go down and cause you not to receive updates at all. [See the FAQ](#FAQ).
+
+#### I take would encourage you not to rely on this service, not only is it up to 12 hours behind the original calendar, it is just running on a VPS which could well go down and cause you not to receive updates at all. [See the FAQ](#FAQ).
 
 ## Instructions
 1. Go to https://science.swansea.ac.uk/intranet/attendance/timetable
