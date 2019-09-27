@@ -13,7 +13,7 @@ def isMember(ev, g, p):
         return True
     return False
 
-@app.route('/<string:stu_hash>', methods=['GET'])
+@app.route('/api/<string:stu_hash>', methods=['GET'])
 def index(stu_hash):
     g = request.args.get('group')
     
