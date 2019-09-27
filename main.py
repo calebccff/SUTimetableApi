@@ -9,7 +9,9 @@ app = Flask(__name__)
 CORS(app)
 
 def isMember(ev, g, p):
-    if groups[g] in ev.name.lower() or groups[g]+' group '+p in ev.name.lower() or groups[g]+' '+p+' group' in ev.name.lower():
+    if groups[g]+' group '+p in ev.name.lower() or groups[g]+' '+p in ev.name.lower():
+        print(groups[g]+' '+p)
+        print(ev.name.lower())
         return True
     return False
 
