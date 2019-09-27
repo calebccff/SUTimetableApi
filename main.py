@@ -15,6 +15,7 @@ def isMember(ev, g, p):
 
 @app.route('/api/<string:stu_hash>', methods=['GET'])
 def index(stu_hash):
+    app.logger.debug(request.url)
     g = request.args.get('group')
     
     if g == None or not len(g.split(":")) == 2:
