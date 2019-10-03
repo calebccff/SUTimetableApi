@@ -24,3 +24,6 @@ Yes, if the original swansea timetable changes, yours will too. Note that this p
 
 ### An important lecture was missing! It's YOUR fault
 I take no responsibilities for any issues here, I highly recommend that you still regularly check the original timetable found [here](https://science.swansea.ac.uk/intranet/attendance/timetable). Your failure to do this is not my responsibility.
+
+### I see you changed it to show model names instead of codes, what if I prefer codes?!
+Add `&codes_not_numbers=1` to the end of your URL and you'll get the codes instead of the names.
