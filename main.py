@@ -15,7 +15,7 @@ def eventIsDifferentSubHouse(name, g, p):
         ret = 'a'
     elif groups[g]+' b ' in name or groups[g]+' group b' in name:
         ret = 'b'
-        print(name, p, g, ret==p)
+        #print(name, p, g, ret==p)
     else:
         return False
     return not ret==p
@@ -23,6 +23,7 @@ def eventIsDifferentSubHouse(name, g, p):
 @app.route('/api/<string:stu_hash>', methods=['GET'])
 def index(stu_hash):
     g = request.args.get('group')
+    hide_optional = request.args.get('hide_optional')
     
     if g == None or not len(g.split(":")) == 2:
         return "Your query string wasn't in the correct format"
@@ -51,10 +52,13 @@ def index(stu_hash):
                 toRemove.append(ev)
         else:
             toRemove.append(ev)
+        
+        if "t" in hide_optional.lower() and "Optional Help Session".lower() in ev.name.lower():
+            toRemove.append(ev)
     for e in toRemove:
         c.events.remove(e)
     
-    if not request.args.get('codes_not_names') == "1":
+    if request.args.get('codes_not_names') == None or not (request.args.get('codes_not_names') == "1" or "t" in request.args.get('codes_not_names')):
         for ev in c.events:
             for mod in modules.keys():
                 if ":"+mod+" - " in ev.name:
@@ -65,7 +69,6 @@ def index(stu_hash):
                     ev.name = ev.name.replace(mod+":", modules[mod]+": ", 1)
                 
     return str(c)
-
 
 
 if __name__ == "__main__":
