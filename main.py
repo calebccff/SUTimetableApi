@@ -22,6 +22,7 @@ def eventIsDifferentSubHouse(name, g, p):
 
 @app.route('/api/<string:stu_hash>', methods=['GET'])
 def index(stu_hash):
+    print(request.url)
     g = request.args.get('group')
     hide_optional = request.args.get('hide_optional')
     hide_optional = hide_optional if not hide_optional == None else "f"
