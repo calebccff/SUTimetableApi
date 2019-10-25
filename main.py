@@ -24,6 +24,7 @@ def eventIsDifferentSubHouse(name, g, p):
 def index(stu_hash):
     g = request.args.get('group')
     hide_optional = request.args.get('hide_optional')
+    hide_optional = hide_optional if not hide_optional == None else "f"
     
     if g == None or not len(g.split(":")) == 2:
         return "Your query string wasn't in the correct format"
