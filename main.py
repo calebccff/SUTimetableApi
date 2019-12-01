@@ -35,10 +35,12 @@ def index(stu_hash):
         return "Your query string wasn't in the correct format"
 
     timetable = requests.get("https://science.swansea.ac.uk/intranet/attendance/timetable/student_calendar/{0}/timetable.ics".format(stu_hash))
+    coursework = requests.get("https://science.swansea.ac.uk/intranet/submission/coursework/calendar/f0a37c4f97dbf8ddh134397/courseworks.ics")
     if "page not found" in timetable.text.lower():
         return "The hash you provided was invalid"
 
     c = Calendar(timetable.text)
+    coursework = Calendar(coursework.text)
     toRemove = []
 
     for ev in c.events:
@@ -69,7 +71,11 @@ def index(stu_hash):
                     ev.name = ev.name.replace(":"+mod, ": "+modules[mod]+" ")
                 elif mod in ev.name:
                     ev.name = ev.name.replace(mod+":", modules[mod]+": ", 1)
-                
+
+    # Append the assignments calendar
+    for ev in coursework.events:
+        c.events.add(ev)
+
     return str(c)
 
 
