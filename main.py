@@ -24,18 +24,26 @@ def eventIsDifferentSubHouse(name, g, p):
 def index(stu_hash):
     print(request.url)
     g = request.args.get('group')
+    excludeList = request.args.get('exclude')
     hide_optional = request.args.get('hide_optional')
     hide_optional = hide_optional if not hide_optional == None else "f"
     
-    if g == None or not len(g.split(":")) == 2:
-        return "Your query string wasn't in the correct format"
-    p = g.split(":")[1].lower()
-    g = g.split(":")[0].lower()
-    if not g in groups.keys() or not p in ['a', 'b']:
-        return "Your query string wasn't in the correct format"
+    # g is now optional
+    if g != None:
+        if not len(g.split(":")) == 2:
+            return "Your query string wasn't in the correct format"
+        p = g.split(":")[1].lower()
+        g = g.split(":")[0].lower()
+        if not g in groups.keys() or not p in ['a', 'b']:
+            return "Your query string wasn't in the correct format"
+
+    # exclude is optional, but always set
+    toExclude = [] # modules to exclude manually
+    if excludeList != None:
+        toExclude = excludeList.split(',')
 
     timetable = requests.get("https://science.swansea.ac.uk/intranet/attendance/timetable/student_calendar/{0}/timetable.ics".format(stu_hash))
-    coursework = requests.get("https://science.swansea.ac.uk/intranet/submission/coursework/calendar/f0a37c4f97dbf8ddh134397/courseworks.ics")
+    coursework = requests.get("https://science.swansea.ac.uk/intranet/submission/coursework/calendar/b4fd7673a7342ea5h185021/courseworks.ics")
     if "page not found" in timetable.text.lower():
         return "The hash you provided was invalid"
 
@@ -45,17 +53,23 @@ def index(stu_hash):
 
     for ev in c.events:
         name = ev.name.lower()
-        removeGroups = list(groups.values())
-        del removeGroups[removeGroups.index(groups[g])]
-        pattern = re.compile("^((?!{}|{}).)+$".format(removeGroups[0], removeGroups[1]))
-        if pattern.match(name): #This means the event name contains either the name of this users house, or no houses
-            if re.compile("^.*{}.*$".format(groups[g])).match(name):
-                if eventIsDifferentSubHouse(name, g, p):
-                    toRemove.append(ev)
-            elif "b groups" in name and p == "a" or "a groups" in name and p == "b": #They actually split in half too....
-                toRemove.append(ev)
-        else:
+
+        if name[0:6] in (str.lower() for str in toExclude):
             toRemove.append(ev)
+
+        if g != None:
+            removeGroups = list(groups.values())
+            del removeGroups[removeGroups.index(groups[g])]
+
+            pattern = re.compile("^((?!{}|{}).)+$".format(removeGroups[0], removeGroups[1]))
+            if pattern.match(name): #This means the event name contains either the name of this users house, or no houses
+                if re.compile("^.*{}.*$".format(groups[g])).match(name):
+                    if eventIsDifferentSubHouse(name, g, p):
+                        toRemove.append(ev)
+                elif "b groups" in name and p == "a" or "a groups" in name and p == "b": #They actually split in half too....
+                    toRemove.append(ev)
+            else:
+                toRemove.append(ev)
         
         if "t" in hide_optional.lower() and "Optional Help Session".lower() in ev.name.lower():
             toRemove.append(ev)
